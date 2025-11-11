@@ -15,6 +15,6 @@ public class HelloCdciApplication {
 	}
 	@GetMapping("/hello")
 	public String hello() {
-		return "Hello from Spring Boot CI/CD!";
+		return "Yes Hello from Spring Boot CI/CD!";
 	}
 }
