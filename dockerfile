@@ -1,5 +1,6 @@
 # Étape de construction
-FROM openjdk:25-jdk-slim AS build
+# For an Ubuntu-based image
+FROM mcr.microsoft.com/openjdk/jdk:25-ubuntu AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src src
