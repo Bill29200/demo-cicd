@@ -1,13 +1,15 @@
-# ---- Build ----
-FROM maven:3.9-eclipse-temurin-17 AS builder
+# Étape de construction
+FROM openjdk:25-jdk-slim AS build
 WORKDIR /app
 COPY pom.xml .
-COPY src ./src
-RUN mvn -B -DskipTests clean package
+COPY src src
+COPY mvnw .
+COPY .mvn .mvn
+RUN chmod +x ./mvnw
+RUN ./mvnw clean package -DskipTests
 
-# ---- Runtime ----
-FROM eclipse-temurin:17-jre-alpine
-WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Étape de création de l'image finale
+FROM openjdk:25-jdk-slim
+VOLUME /tmp
+COPY --from=build /app/target/*.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
