@@ -1,15 +1,30 @@
-# Étape de construction
+
+# Build stage
 FROM openjdk:25-jdk-slim AS build
+
 WORKDIR /app
-COPY pom.xml .
-COPY src src
+
+# Copy Maven wrapper
 COPY mvnw .
 COPY .mvn .mvn
+COPY pom.xml .
+COPY src src
+
+# Make Maven wrapper executable
 RUN chmod +x ./mvnw
+
+# Build the application
 RUN ./mvnw clean package -DskipTests
 
-# Étape de création de l'image finale
+# Runtime stage
 FROM openjdk:25-jdk-slim
-VOLUME /tmp
+WORKDIR /app
+
+# Copy the built JAR
 COPY --from=build /app/target/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+
+# Expose port
+EXPOSE 8080
+
+# Start the application
+ENTRYPOINT ["java", "-jar", "/app.jar"]
